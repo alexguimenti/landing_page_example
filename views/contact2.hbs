@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>MexPay</title>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="public/css/style.css">
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            $.getJSON('public/estados_cidades.json', function (data) {
+
+                var items = [];
+                var options = '<option value="state">Estado...</option>';
+
+                $.each(data, function (key, val) {
+                    options += '<option value="' + val.nome + '">' + val.nome + '</option>';
+                });
+                $("#estados").html(options);
+
+                $("#estados").change(function () {
+
+                    var options_cidades = '';
+                    var str = "";
+
+                    $("#estados option:selected").each(function () {
+                        str += $(this).text();
+                    });
+
+                    $.each(data, function (key, val) {
+                        if (val.nome == str) {
+                            $.each(val.cidades, function (key_city, val_city) {
+                                options_cidades += '<option value="' + val_city + '">' + val_city + '</option>';
+                            });
+                        }
+                    });
+
+                    $("#cidades").html(options_cidades);
+
+                }).change();
+
+            });
+
+        });
+
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="brand"><span>MexPay</span></h1>
+        <div class="wrapper animated bounceInLeft">
+            <div class="company-info">
+                <h3></h3>
+                <ul>
+                    <li><i class="fa fa-road"></i> Rua Ofélia, 286 - São Paulo</li>
+                    <li><i class="fa fa-phone"></i> (12) 98168-8627</li>
+                    <li><i class="fa fa-envelope"></i> alexguimenti@gmail.com</li>
+                </ul>
+            </div>
+            <div class="contact">
+                <h3>Quero usar!</h3>
+                {{msg}}
+                <form method="POST" action="send">
+                    <p>
+                        <label>Nome</label>
+                        <input type="text" name="firstname">
+                    </p>
+                    <p>
+                        <label>Sobrenome</label>
+                        <input type="text" name="lastname">
+                    </p>
+                    <p>
+                        <label>Email</label>
+                        <input type="text" name="email">
+                    </p>
+                    <p>
+                        <label>Telefone/Celular</label>
+                        <input type="text" name="phone">
+                    </p>
+
+                    <!-- Estado -->
+                    <select id="estados" class="custom-select my-1 mr-sm-2">
+                        <option value=""></option>
+                    </select>
+                    <select id="cidades" class="custom-select my-1 mr-sm-2">
+                    </select>
+
+                    <p class="">
+                        <label>Já tem faturamento ou está começando?</label>
+                        <select class="custom-select my-1 mr-sm-2 tierselector" id="tierselector" name="tier_">
+                            <option selected>Escolha...</option>
+                            <option value="tier0">Ainda não comecei</option>
+                            <option value="tier1">Já tenho algum faturamento</option>
+                        </select>
+                    </p>
+                    <p>
+                        <label for="tier" class="tiers tier1" id="" style="display:none">Faturamento Atual (mensal)</label>
+                        <select class="custom-select my-1 mr-sm-2 tiers tier1" id="1" name="tier" style="display:none">
+                            <option selected>Escolha...</option>
+                            <option value="0">Ainda não comecei</option>
+                            <option value="1">Até 5 mil R$</option>
+                            <option value="2">Até 25 mil R$</option>
+                            <option value="3">Até 50 mil R$</option>
+                            <option value="4">Até 200 mil R$</option>
+                            <option value="5">Até 500 mil R$</option>
+                            <option value="6">Mais de 500 mil R$</option>
+                        </select>
+                    </p>
+                    <p>
+                        <label>Possui CNPJ?</label>
+                        <select class="custom-select my-1 mr-sm-2 cnpj1 cnpjselector" id="cnpjselector" name="cnpj1">
+                            <option selected>Escolha...</option>
+                            <option value="cnpj0">Não</option>
+                            <option value="cnpj1">Sim</option>
+
+                        </select>
+                    </p>
+                    <p>
+                        <label style="display:none" class="cnpjs cnpj1">CNPJ</label>
+                        <input type="text" name="cnpj" id="cnpj1" style="display:none" class="cnpjs cnpj1">
+                    </p>
+                    <p class="">
+                        <label>Meio de Pagamento Atual</label>
+                        <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="provider">
+                            <option selected>Escolha...</option>
+                            <option value="Cielo">Cielo</option>
+                            <option value="PagSeguro">PagSeguro</option>
+                            <option value="Mercado Pago">Mercado Pago</option>
+                        </select>
+                    </p>
+                    <p class="full">
+                        <label>Caso queira, deixe uma mensagem!</label>
+                        <textarea name="message" rows="2"></textarea>
+                    </p>
+                    <button type="submit" class="btn btn-success">ENVIAR</button>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+        crossorigin="anonymous"></script>
+    <script>
+        $(function () {
+            $('#colorselector').change(function () {
+                $('.colors').hide();
+                $('#' + $(this).val()).show();
+            });
+        });
+
+
+        $(function () {
+            $('#cnpjselector').change(function () {
+                $('.cnpjs').hide();
+                $('.' + $(this).val()).show();
+            });
+        });
+        $(function () {
+            $('#tierselector').change(function () {
+                $('.tiers').hide();
+                $('.' + $(this).val()).show();
+            });
+        });
+    </script>
+</body>
+
+</html>
